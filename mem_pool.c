@@ -105,17 +105,7 @@ alloc_status mem_init() {
     // allocate the pool store with initial capacity
     // note: holds pointers only, other functions to allocate/deallocate
 
-    if( pool_store == NULL)
-    {
-        pool_store = calloc(MEM_POOL_STORE_INIT_CAPACITY, sizeof(pool_mgr_pt));
-        pool_store_capacity = MEM_POOL_STORE_INIT_CAPACITY;
-
-        return ALLOC_OK;
-    }
-    else
-    {
-        return ALLOC_CALLED_AGAIN;
-    }
+    return ALLOC_FAIL;
 }
 
 alloc_status mem_free() {
@@ -124,16 +114,7 @@ alloc_status mem_free() {
     // can free the pool store array
     // update static variables
 
-    if(pool_store != NULL)
-    {
-        return ALLOC_OK;
-    }
-    else
-    {
-        return ALLOC_CALLED_AGAIN;
-    }
-
-
+    return ALLOC_FAIL;
 }
 
 pool_pt mem_pool_open(size_t size, alloc_policy policy) {
@@ -168,15 +149,6 @@ alloc_status mem_pool_close(pool_pt pool) {
     // find mgr in pool store and set to null
     // note: don't decrement pool_store_size, because it only grows
     // free mgr
-    pool_mgr_pt aMgr = (pool_mgr_pt) pool;
-    if(pool->num_allocs > 0)
-    {
-        return ALLOC_FAIL;
-    }
-    else if(pool->num_gaps > 1)
-    {
-        return ALLOC_FAIL;
-    }
 
     return ALLOC_FAIL;
 }
