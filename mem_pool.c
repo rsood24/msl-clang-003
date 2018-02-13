@@ -282,7 +282,7 @@ void * mem_new_alloc(pool_pt pool, size_t size) {
     int p = 0;
     if(pool->policy == FIRST_FIT)
     {
-        while(aMgr->node_heap[p].alloc_record.size < size && aMgr->node_heap[p].allocated == 0)
+        while(aMgr->node_heap[p].alloc_record.size < size && aMgr->node_heap[p].allocated == 1)
         {
             p++;
         }
@@ -461,15 +461,13 @@ void mem_inspect_pool(pool_pt pool,
     // get the mgr from the pool
 
     node_pt aNode = aMgr->node_heap;
-    *num_segments = aMgr->used_nodes;
-    *segments = (pool_segment_pt) calloc(aMgr->used_nodes, sizeof(pool_segment_t));
+    pool_segment_pt segs = malloc(sizeof(struct _pool_segment) * aMgr->used_nodes);
     int i = 0;
     
     while(aNode != NULL)
     {
-        segments[i] = calloc(1, sizeof(pool_segment_t));
-        segments[i]->size = aNode->alloc_record.size;
-        segments[i]->allocated = aNode->allocated;
+        segs[i].size = aNode->alloc_record.size;
+        segs[i].allocated = aNode->allocated;
         aNode = aNode->next;
         ++i;
     }
@@ -478,10 +476,9 @@ void mem_inspect_pool(pool_pt pool,
     // loop through the node heap and the segments array
     //    for each node, write the size and allocated in the segment
     // "return" the values:
-    /*
-                    *segments = segs;
-                    *num_segments = pool_mgr->used_nodes;
-     */
+    *segments = segs;
+    *num_segments = aMgr->used_nodes;
+
 
 }
 
@@ -536,7 +533,7 @@ static alloc_status _mem_add_to_gap_ix(pool_mgr_pt pool_mgr,
 
     // check success
 
-    return ALLOC_OK;
+    return status;
 }
 
 static alloc_status _mem_remove_from_gap_ix(pool_mgr_pt pool_mgr,
