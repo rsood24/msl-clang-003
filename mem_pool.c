@@ -464,6 +464,7 @@ void mem_inspect_pool(pool_pt pool,
     *num_segments = aMgr->used_nodes;
     *segments = (pool_segment_pt) calloc(aMgr->used_nodes, sizeof(pool_segment_t));
     int i = 0;
+    
     while(aNode != NULL)
     {
         segments[i] = calloc(1, sizeof(pool_segment_t));
